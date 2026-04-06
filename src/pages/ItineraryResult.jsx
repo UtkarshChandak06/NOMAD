@@ -201,7 +201,7 @@ No markdown, no explanation.`
       region: answers.destination,
       duration: answers.duration,
       style: answers.style,
-      image: `https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&q=80&w=800`,
+      image: `https://image.pollinations.ai/prompt/${encodeURIComponent(answers.destination.split(',')[0] + ' highly detailed beautiful travel landscape photography')}?width=800&height=600&nologo=true`,
       answers: answers,
       itinerary: itinerary,
       days: itinerary.days.map(d => ({
@@ -210,7 +210,7 @@ No markdown, no explanation.`
         route: `${d.morning?.activity || ''}, ${d.afternoon?.activity || ''}, ${d.evening?.activity || ''}`,
         food: d.lunch?.mustTry || '',
         cost: d.estimatedDayCost,
-        img: `https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=800`
+        img: `https://image.pollinations.ai/prompt/${encodeURIComponent(d.title + ' in ' + answers.destination.split(',')[0] + ' beautiful travel photography')}?width=800&height=600&nologo=true`
       }))
     }
 
@@ -326,7 +326,7 @@ No markdown, no explanation.`
             {itinerary.days.map((day, idx) => {
               const dayStr = day.dayNumber || idx + 1;
               const imgQuery = day.imageKeyword || day.morning?.activity || answers.destination.split(',')[0];
-              const imgSrc = `https://source.unsplash.com/400x300/?${encodeURIComponent(imgQuery)},travel`;
+              const imgSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(imgQuery + ' beautiful travel destination architecture photography')}?width=800&height=600&nologo=true`;
               
               return (
                 <div key={idx} className="group relative flex gap-4 md:gap-8">
