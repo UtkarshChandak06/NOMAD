@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"node server.mjs\" \"vite\" --names api,web --prefix-colors blue,magenta",
+    "dev": "concurrently -k \"node api/index.mjs\" \"vite\" --names api,web --prefix-colors blue,magenta",
     "build": "vite build",
-    "start": "node server.mjs",
+    "start": "node api/index.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

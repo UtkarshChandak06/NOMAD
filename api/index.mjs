@@ -105,7 +105,7 @@ app.post('/api/chat', async (req, res) => {
   }
 })
 
-const distPath = path.join(__dirname, 'dist')
+const distPath = path.join(__dirname, '../dist')
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath))
   app.use((req, res, next) => {
