@@ -35,6 +35,14 @@ export function AuthProvider({ children }) {
     return false
   }
 
+  const skipLogin = () => {
+    const guestUser = { name: 'Guest Explorer', email: 'guest@nomad.app', avatar: '' }
+    localStorage.setItem('nomad_user', JSON.stringify(guestUser))
+    localStorage.setItem('nomad_isLoggedIn', 'true')
+    setUser(guestUser)
+    return true
+  }
+
   const logout = () => {
     localStorage.removeItem('nomad_isLoggedIn')
     localStorage.removeItem('nomad_user')
@@ -42,7 +50,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, signup, skipLogin, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   )

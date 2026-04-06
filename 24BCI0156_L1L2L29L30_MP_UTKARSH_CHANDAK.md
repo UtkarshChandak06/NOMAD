@@ -72,12 +72,13 @@ The system integrates Google AI Studio (Gemini API) to enable real-time, intelli
 ## 3. Module Details and Key Features
 
 ### Module 1: Authentication Module
-**Files**: `Login.jsx`, `AuthContext.jsx`
+**Files**: `Login.jsx`, `Signup.jsx`, `AuthContext.jsx`, `ProtectedRoute.jsx`
 
 | Feature | Description |
 |---------|-------------|
 | User Registration | Sign up with name, email, password |
 | Login/Logout | Session management via localStorage |
+| **Guest Access** | **"Skip for now" button — explore as guest without credentials** |
 | Protected Routes | Unauthenticated users redirected to login |
 | Persistent Sessions | Login state preserved across browser refreshes |
 
@@ -89,6 +90,13 @@ export function AuthProvider_24BCI0156({ children }) {
     const saved = localStorage.getItem('nomad_isLoggedIn')
     return saved ? JSON.parse(localStorage.getItem('nomad_user')) : null
   })
+
+  const skipLogin = () => {
+    const guestUser = { name: 'Guest Explorer', email: 'guest@nomad.app' }
+    localStorage.setItem('nomad_user', JSON.stringify(guestUser))
+    localStorage.setItem('nomad_isLoggedIn', 'true')
+    setUser(guestUser)
+  }
   // ... authentication logic
 }
 ```
@@ -253,6 +261,21 @@ app.post('/api/chat', async (req, res) => {
 
 ---
 
+### Module 9: Developer Portfolio
+**Files**: `About.jsx`
+
+| Feature | Description |
+|---------|-------------|
+| Hero Section | Full-viewport gradient with name, avatar, tagline, and animated stats |
+| Skills Grid | 4 category cards: Programming, Web Dev, Core Domains, Tools |
+| Projects Showcase | 3 expandable project cards (SIGNIFY, ESP8266, NOMAD) with tabbed details |
+| Journey Timeline | Education (VIT) and developer experience timeline |
+| Contact Section | Email, GitHub, LinkedIn links in a dark gradient card |
+| Floating Nav | Scroll-tracking side navigation dots (desktop) |
+| Animations | Intersection Observer fade-ins, animated counters, micro-interactions |
+
+---
+
 ## 4. Design Layout (Pictorial Representation of Workflow)
 
 ### Application Architecture
@@ -265,7 +288,7 @@ app.post('/api/chat', async (req, res) => {
 |                                                              |
 |  +----------+    +----------+    +----------+                |
 |  |  Login   |--->|  Home    |--->| Planner  |                |
-|  |  Page    |    | Dashboard|    | (17 Qs)  |                |
+|  | (+ Skip) |    | Dashboard|    | (17 Qs)  |                |
 |  +----------+    +----+-----+    +----+-----+                |
 |                       |               |                      |
 |                       v               v                      |
@@ -286,6 +309,11 @@ app.post('/api/chat', async (req, res) => {
 |              | Saved    |     | Expense  |  |Profile |      |
 |              | Trips    |     | Tracker  |  |        |      |
 |              +----------+     +----------+  +--------+      |
+|                                                              |
+|              +-------------------------------------------+   |
+|              |  Portfolio Page (About) — Developer Info   |   |
+|              |  Hero | Skills | Projects | Journey | CTA |   |
+|              +-------------------------------------------+   |
 |                                                              |
 +-------------------------------------------------------------+
 ```
@@ -315,6 +343,8 @@ User Opens App
      +---> Click "Expenses" --> Log/View/Delete Expenses --> Budget Tracking
      |
      +---> Click "Saved Trips" --> View/Delete Saved Itineraries
+     |
+     +---> Click "Portfolio" --> View Developer Profile, Skills, Projects, Contact
      |
      +---> Click "Profile" --> View/Edit Profile --> Logout
 ```
@@ -636,6 +666,7 @@ const navItems_24BCI0156 = [
   { to: '/planner', label: 'Plan a Trip', icon: 'event_note' },
   { to: '/saved-trips', label: 'Saved Trips', icon: 'bookmark' },
   { to: '/expenses', label: 'Expenses', icon: 'account_balance_wallet' },
+  { to: '/about', label: 'Portfolio', icon: 'person_search' },
   { to: '/profile', label: 'Profile', icon: 'account_circle' },
 ]
 
@@ -749,7 +780,8 @@ NOMAD2.0/
     |
     +-- pages/
         |-- Home.jsx              # Dashboard + NLP search
-        |-- Login.jsx             # Authentication
+        |-- Login.jsx             # Authentication (with Skip for now)
+        |-- Signup.jsx            # User registration
         |-- Explore.jsx           # Destination browser
         |-- DestinationDetail.jsx # Single destination view
         |-- Planner.jsx           # 17-question planner
@@ -757,6 +789,8 @@ NOMAD2.0/
         |-- Itinerary.jsx         # Saved itinerary viewer
         |-- SavedTrips.jsx        # Trip gallery
         |-- Expenses.jsx          # Expense tracker
+        |-- About.jsx             # Developer portfolio page
+        |-- Community.jsx         # Community page
         +-- Profile.jsx           # User profile
 ```
 

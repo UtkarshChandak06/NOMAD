@@ -7,7 +7,7 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const { login } = useAuth()
+  const { login, skipLogin } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -17,6 +17,11 @@ export default function Login() {
     } else {
       setError('Invalid credentials or user not found. Please sign up first.')
     }
+  }
+
+  const handleSkip = () => {
+    skipLogin()
+    navigate('/')
   }
 
   return (
@@ -67,7 +72,18 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-10 pt-8 border-t border-[#00257b]/5">
+        {/* Skip for now */}
+        <div className="mt-6">
+          <button
+            onClick={handleSkip}
+            className="w-full py-3.5 bg-[#FF9933]/10 text-[#FF9933] font-black rounded-2xl hover:bg-[#FF9933]/20 transition-all flex justify-center items-center gap-2 uppercase tracking-widest text-[11px] group"
+          >
+            <Icon name="explore" className="text-sm group-hover:rotate-45 transition-transform" />
+            <span>Skip for now — Explore as Guest</span>
+          </button>
+        </div>
+
+        <div className="mt-8 pt-8 border-t border-[#00257b]/5">
             <p className="text-sm text-[#00257b]/50">
                 Don&apos;t have an account?{' '}
                 <Link to="/signup" className="text-[#FF9933] font-black hover:underline">Create Account</Link>
