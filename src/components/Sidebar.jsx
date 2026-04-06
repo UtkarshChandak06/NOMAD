@@ -13,7 +13,7 @@ export default function Sidebar() {
     { to: '/planner', label: 'Plan a Trip', icon: 'event_note' },
     { to: '/saved-trips', label: 'Saved Trips', icon: 'bookmark' },
     { to: '/expenses', label: 'Expenses', icon: 'account_balance_wallet' },
-    { to: '/about', label: 'About Project', icon: 'info' },
+    { to: '/about', label: 'Portfolio', icon: 'person_search' },
     { to: '/profile', label: 'Profile', icon: 'account_circle' },
   ]
 
