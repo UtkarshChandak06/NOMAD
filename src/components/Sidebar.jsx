@@ -41,7 +41,7 @@ export default function Sidebar() {
 
       {/* Sidebar Overlay (Mobile) */}
       {isOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
           onClick={() => setIsOpen(false)}
         />
@@ -71,8 +71,8 @@ export default function Sidebar() {
               onClick={() => setIsOpen(false)}
               className={`
                 flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300
-                ${pathname === link.to 
-                  ? 'bg-[#FF9933] text-white shadow-lg shadow-[#FF9933]/30' 
+                ${pathname === link.to
+                  ? 'bg-[#FF9933] text-white shadow-lg shadow-[#FF9933]/30'
                   : 'text-[#00257b]/70 hover:bg-[#FF9933]/10 hover:text-[#00257b]'
                 }
               `}

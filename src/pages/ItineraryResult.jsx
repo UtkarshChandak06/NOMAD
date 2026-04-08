@@ -119,7 +119,7 @@ export default function ItineraryResult() {
         const result = await chatWithNomad({
           messages: [{ role: 'user', content: prompt }],
           temperature: 0.7,
-          max_tokens: 8192
+          max_tokens: 3000
         })
 
         const parsed = parseItineraryJSON(result.message)

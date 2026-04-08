@@ -81,7 +81,7 @@ app.post('/api/chat', async (req, res) => {
         model: DEFAULT_MODEL,
         messages: payloadMessages,
         temperature: Math.min(2, Math.max(0, Number(temperature) || 0.65)),
-        max_tokens: Math.min(8192, Math.max(256, Number(max_tokens) || 4096)),
+        max_tokens: Math.min(5000, Math.max(256, Number(max_tokens) || 4096)),
       }),
     })
 

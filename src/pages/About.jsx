@@ -611,12 +611,12 @@ export default function About() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
                   <a
-                    href="mailto:utkarshchandak06@gmail.com"
+                    href="mailto:utkarsh.chandak2024@vitstudent.ac.in"
                     className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-[#FF9933]/30 transition-all group"
                   >
                     <Icon name="mail" className="text-3xl text-[#FF9933] mb-3 group-hover:scale-110 transition-transform" />
                     <p className="text-white font-bold text-sm mb-1">Email</p>
-                    <p className="text-white/30 text-[10px] font-bold break-all">utkarshchandak06@gmail.com</p>
+                    <p className="text-white/30 text-[10px] font-bold break-all">utkarsh.chandak2024@vitstudent.ac.in</p>
                   </a>
 
                   <a
@@ -631,7 +631,7 @@ export default function About() {
                   </a>
 
                   <a
-                    href="https://linkedin.com/in/utkarsh-chandak"
+                    href="https://www.linkedin.com/in/utkarsh-chandak-ba4811204"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-[#FF9933]/30 transition-all group"
