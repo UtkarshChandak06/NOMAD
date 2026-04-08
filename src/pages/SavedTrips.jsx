@@ -39,7 +39,7 @@ export default function SavedTrips() {
                             <Link to={`/itinerary/${trip.id}`} className="flex-1 flex flex-col">
                                 <div className="aspect-[16/10] overflow-hidden relative">
                                     <img 
-                                        src={trip.image || 'https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=800'} 
+                                        src={trip.image || 'https://image.pollinations.ai/prompt/beautiful%20travel%20destination%20landscape%20photography?width=800&height=600&nologo=true'} 
                                         alt={trip.title} 
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
                                     />

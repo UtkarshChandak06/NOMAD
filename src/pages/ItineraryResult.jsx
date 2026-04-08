@@ -93,6 +93,9 @@ export default function ItineraryResult() {
   const [loading, setLoading] = useState(true)
   const [aiError, setAiError] = useState(null)
   const [regeneratingSlot, setRegeneratingSlot] = useState(null)
+  const [showPackingList, setShowPackingList] = useState(false)
+  const [packingChecklist, setPackingChecklist] = useState(null)
+  const [isGeneratingPacking, setIsGeneratingPacking] = useState(false)
   const hasFetched = useRef(false)
 
   const daysCount = useMemo(() => {
@@ -201,7 +204,7 @@ No markdown, no explanation.`
       region: answers.destination,
       duration: answers.duration,
       style: answers.style,
-      image: `https://image.pollinations.ai/prompt/${encodeURIComponent(answers.destination.split(',')[0] + ' highly detailed beautiful travel landscape photography')}?width=800&height=600&nologo=true`,
+      image: `https://image.pollinations.ai/prompt/${encodeURIComponent("Most famous landmark of " + answers.destination.split(',')[0] + " highly detailed beautiful travel scenery photography")}?width=800&height=600&nologo=true`,
       answers: answers,
       itinerary: itinerary,
       days: itinerary.days.map(d => ({
@@ -210,7 +213,7 @@ No markdown, no explanation.`
         route: `${d.morning?.activity || ''}, ${d.afternoon?.activity || ''}, ${d.evening?.activity || ''}`,
         food: d.lunch?.mustTry || '',
         cost: d.estimatedDayCost,
-        img: `https://image.pollinations.ai/prompt/${encodeURIComponent(d.title + ' in ' + answers.destination.split(',')[0] + ' beautiful travel photography')}?width=800&height=600&nologo=true`
+        img: `https://image.pollinations.ai/prompt/${encodeURIComponent("Most famous landmark of " + (d.morning?.activity || answers.destination.split(',')[0]) + " highly detailed beautiful travel photography")}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random() * 1000)}`
       }))
     }
 
@@ -219,6 +222,74 @@ No markdown, no explanation.`
       setIsSaving(false)
       navigate('/saved-trips')
     }, 1500)
+  }
+
+  const handleGeneratePackingList = async () => {
+    if (packingChecklist) {
+      setShowPackingList(true)
+      return
+    }
+    setIsGeneratingPacking(true)
+    setShowPackingList(true)
+    
+    try {
+      const prompt = `Based on this itinerary to ${answers.destination} for ${daysCount} days, generate a categorized packing checklist.
+Include 4 categories (e.g. Clothing, Essentials, Electronics, Toiletries).
+Return ONLY JSON in this format: { "categories": [ { "name": "Clothing", "items": ["Item 1", "Item 2"] } ] }`
+      
+      const result = await chatWithNomad({
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.5,
+        max_tokens: 1000
+      })
+      const parsed = parseItineraryJSON(result.message)
+      if (parsed && parsed.categories) {
+        setPackingChecklist(parsed.categories)
+      } else {
+        throw new Error("Invalid output")
+      }
+    } catch (err) {
+      setPackingChecklist([{name: "Error", items: ["Failed to generate checklist. Please try again."]}])
+    } finally {
+      setIsGeneratingPacking(false)
+    }
+  }
+
+  const handleDownloadICS = () => {
+    if (!itinerary) return
+    
+    let icsContent = "BEGIN:VCALENDAR\\nVERSION:2.0\\nPRODID:-//Nomad AI Trip Planner//EN\\n"
+    let currentDate = new Date()
+    currentDate.setDate(currentDate.getDate() + 1) // Start tomorrow
+    
+    const formatDate = (date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+
+    itinerary.days.forEach((day, idx) => {
+      const eventDate = new Date(currentDate)
+      eventDate.setDate(currentDate.getDate() + idx)
+      
+      const startDay = new Date(eventDate)
+      startDay.setHours(9, 0, 0)
+      const endDay = new Date(eventDate)
+      endDay.setHours(21, 0, 0)
+
+      icsContent += "BEGIN:VEVENT\\n"
+      icsContent += `DTSTART:${formatDate(startDay)}\\n`
+      icsContent += `DTEND:${formatDate(endDay)}\\n`
+      icsContent += `SUMMARY:Nomad Day ${day.dayNumber} - ${day.title}\\n`
+      icsContent += `DESCRIPTION:Morning: ${day.morning?.activity}\\nLunch: ${day.lunch?.restaurant}\\nAfternoon: ${day.afternoon?.activity}\\nDinner: ${day.dinner?.restaurant}\\nHotel: ${day.hotel}\\n`
+      icsContent += "END:VEVENT\\n"
+    })
+    
+    icsContent += "END:VCALENDAR"
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' })
+    const link = document.createElement('a')
+    link.href = window.URL.createObjectURL(blob)
+    link.setAttribute('download', `${answers.destination.split(',')[0].replace(/\\s+/g, '_')}-Itinerary.ics`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const handlePrint = () => {
@@ -302,6 +373,20 @@ No markdown, no explanation.`
           </div>
           <div className="flex flex-wrap gap-3">
             <button
+              onClick={handleGeneratePackingList}
+              className="px-5 py-3 rounded-xl border border-[#FF9933]/20 text-[#FF9933] font-bold hover:bg-[#FF9933]/10 transition-all shadow-sm font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-wider flex items-center gap-2"
+            >
+              <Icon name="luggage" className="text-[18px]" />
+              Checklist
+            </button>
+            <button
+              onClick={handleDownloadICS}
+              className="px-5 py-3 rounded-xl border border-[#0033A0]/20 text-[#0033A0] font-bold hover:bg-[#0033A0]/5 transition-all shadow-sm font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-wider flex items-center gap-2"
+            >
+              <Icon name="event" className="text-[18px]" />
+              Save to Calendar
+            </button>
+            <button
               onClick={handleSave}
               disabled={isSaving}
               className="flex items-center gap-2 bg-[#FF9933] text-white px-6 py-3 rounded-xl font-bold hover:brightness-110 transition-all group shadow-lg shadow-[#FF9933]/30 disabled:opacity-50 font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest"
@@ -326,7 +411,7 @@ No markdown, no explanation.`
             {itinerary.days.map((day, idx) => {
               const dayStr = day.dayNumber || idx + 1;
               const imgQuery = day.imageKeyword || day.morning?.activity || answers.destination.split(',')[0];
-              const imgSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(imgQuery + ' beautiful travel destination architecture photography')}?width=800&height=600&nologo=true`;
+              const imgSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent("Most famous and beautiful tourist landmark of " + imgQuery + " highly detailed photography")}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random() * 1000)}`;
               
               return (
                 <div key={idx} className="group relative flex gap-4 md:gap-8">
@@ -457,6 +542,73 @@ No markdown, no explanation.`
         </div>
 
       </main>
+
+      {/* Packing List Modal */}
+      {showPackingList && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#001a4d]/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="bg-[#FF9933] text-white p-6 flex justify-between items-center relative overflow-hidden">
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold font-['Noto_Serif'] flex items-center gap-2">
+                  <Icon name="inventory_2" /> Smart Packing List
+                </h3>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-90 mt-1">AI Curated for {answers.destination.split(',')[0]}</p>
+              </div>
+              <button onClick={() => setShowPackingList(false)} className="relative z-10 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+                <Icon name="close" />
+              </button>
+              <Icon name="luggage" className="absolute -right-4 -bottom-4 text-[100px] text-white/10" filled />
+            </div>
+            
+            <div className="p-6 overflow-y-auto bg-[#fdf9f3] flex-1">
+              {isGeneratingPacking ? (
+                <div className="py-16 flex flex-col items-center justify-center text-center space-y-4">
+                  <div className="relative w-16 h-16">
+                    <div className="absolute inset-0 border-4 border-[#FF9933]/20 rounded-full"></div>
+                    <div className="absolute inset-0 border-4 border-[#FF9933] rounded-full border-t-transparent animate-spin"></div>
+                    <Icon name="auto_awesome" className="absolute inset-0 m-auto text-[#FF9933]" />
+                  </div>
+                  <p className="font-bold text-[#0033A0] animate-pulse">Analyzing itinerary & generating checklist...</p>
+                </div>
+              ) : packingChecklist && packingChecklist[0]?.name === "Error" ? (
+                <div className="text-center py-12 text-red-500 font-bold bg-white rounded-2xl border border-red-100 shadow-sm">
+                  <Icon name="error" className="text-4xl mb-2 opacity-50" />
+                  <p>{packingChecklist[0].items[0]}</p>
+                </div>
+              ) : packingChecklist ? (
+                <div className="space-y-6">
+                  {packingChecklist.map((cat, i) => (
+                    <div key={i} className="bg-white p-6 rounded-[1.5rem] border border-[#0033A0]/5 shadow-sm hover:shadow-md transition-shadow">
+                      <h4 className="font-bold text-[#0033A0] mb-4 flex items-center gap-2 text-lg">
+                        <Icon name="check_circle" className="text-[#FF9933]" /> {cat.name}
+                      </h4>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-[#4a5b7d] font-medium">
+                        {cat.items.map((item, j) => (
+                          <li key={j} className="flex items-start gap-3 bg-[#fdf9f3]/50 p-2 rounded-lg group">
+                            <input type="checkbox" className="mt-1 w-4 h-4 rounded border-[#0033A0]/20 text-[#FF9933] focus:ring-[#FF9933] cursor-pointer" />
+                            <span className="group-hover:text-[#001a4d] transition-colors">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+            
+            <div className="bg-white p-4 border-t border-[#0033A0]/5 flex justify-end">
+              <button 
+                onClick={() => window.print()} 
+                disabled={isGeneratingPacking}
+                className="px-6 py-2.5 bg-[#0033A0] text-white rounded-xl font-bold font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-wider hover:bg-[#00257b] transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                <Icon name="print" className="text-[16px]" /> Print List
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

@@ -177,13 +177,6 @@ const timeline = [
     org: 'VIT — Vellore Institute of Technology',
     icon: 'school',
     description: 'Specializing in Information Security with coursework in AI/ML, Data Structures, Cryptography, and Network Security.'
-  },
-  {
-    period: '2023 – Present',
-    title: 'Full-Stack & AI Developer',
-    org: 'Self-Directed Projects',
-    icon: 'rocket_launch',
-    description: 'Building real-world projects across AI, IoT, and Web Development with focus on practical system design, deployment, and performance optimization.'
   }
 ]
 
@@ -242,11 +235,10 @@ export default function About() {
             key={s.id}
             onClick={() => scrollTo(s.id)}
             title={s.label}
-            className={`group relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
-              activeSection === s.id
+            className={`group relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${activeSection === s.id
                 ? 'bg-[#FF9933] text-white shadow-lg shadow-[#FF9933]/30 scale-110'
                 : 'bg-white text-[#00257b]/40 border border-[#00257b]/5 hover:bg-[#FF9933]/10 hover:text-[#FF9933]'
-            }`}
+              }`}
           >
             <Icon name={s.icon} className="text-lg" />
             <span className="absolute right-14 bg-[#0033A0] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap tracking-wider uppercase">
@@ -337,7 +329,7 @@ export default function About() {
           {/* Bottom Wave */}
           <div className="absolute bottom-0 left-0 right-0">
             <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 60L48 52C96 44 192 28 288 24C384 20 480 28 576 40C672 52 768 68 864 72C960 76 1056 68 1152 56C1248 44 1344 28 1392 20L1440 12V120H0V60Z" fill="#fdf9f3"/>
+              <path d="M0 60L48 52C96 44 192 28 288 24C384 20 480 28 576 40C672 52 768 68 864 72C960 76 1056 68 1152 56C1248 44 1344 28 1392 20L1440 12V120H0V60Z" fill="#fdf9f3" />
             </svg>
           </div>
         </section>
@@ -482,11 +474,10 @@ export default function About() {
                                 e.stopPropagation()
                                 setActiveProjectTab({ ...activeProjectTab, [project.id]: tab.key })
                               }}
-                              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                                currentTab === tab.key
+                              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${currentTab === tab.key
                                   ? 'bg-white text-[#0033A0] shadow-sm'
                                   : 'text-[#00257b]/40 hover:text-[#00257b]/60'
-                              }`}
+                                }`}
                             >
                               <Icon name={tab.icon} className="text-sm" />
                               <span className="hidden sm:inline">{tab.label}</span>

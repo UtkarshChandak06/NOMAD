@@ -15,6 +15,7 @@ import SavedTrips from './pages/SavedTrips'
 import ItineraryResult from './pages/ItineraryResult'
 import Profile from './pages/Profile'
 import About from './pages/About'
+import ChatBot from './components/ChatBot'
 
 export default function App() {
   return (
@@ -41,6 +42,7 @@ export default function App() {
             
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          <ChatBot />
         </BrowserRouter>
       </TripProvider>
     </AuthProvider>
