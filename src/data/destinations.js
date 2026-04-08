@@ -12,6 +12,21 @@ import udaipurImg from '../assets/destinations/udaipur.png';
 import agraImg from '../assets/destinations/agra.png';
 import rishikeshImg from '../assets/destinations/rishikesh.png';
 import darjeelingImg from '../assets/destinations/darjeeling.png';
+import hampiImg from '../assets/destinations/hampi.png';
+import mysoreImg from '../assets/destinations/mysore.png';
+import coorgImg from '../assets/destinations/coorg.png';
+import shimlaImg from '../assets/destinations/shimla.png';
+import jaisalmerImg from '../assets/destinations/jaisalmer.png';
+import amritsarImg from '../assets/destinations/amritsar.png';
+import meghalayaImg from '../assets/destinations/meghalaya.png';
+import andamanImg from '../assets/destinations/andaman.png';
+import ootyImg from '../assets/destinations/ooty.png';
+import pushkarImg from '../assets/destinations/pushkar.png';
+import jodhpurImg from '../assets/destinations/jodhpur.png';
+import alleppeyImg from '../assets/destinations/alleppey.png';
+import pondicherryImg from '../assets/destinations/pondicherry.png';
+import mountabuImg from '../assets/destinations/mountabu.png';
+import mussoorieImg from '../assets/destinations/mussoorie.png';
 
 const destinations = [
   {
@@ -289,7 +304,7 @@ const destinations = [
     name: 'Hampi',
     state: 'Karnataka',
     tagline: 'Ruins of the Vijayanagara Empire',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Hampi%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: hampiImg,
     rating: 4.7,
     budget: 'low',
     continent: 'South India',
@@ -316,7 +331,7 @@ const destinations = [
     name: 'Mysore',
     state: 'Karnataka',
     tagline: 'City of Palaces',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Mysore%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: mysoreImg,
     rating: 4.6,
     budget: 'low',
     continent: 'South India',
@@ -343,7 +358,7 @@ const destinations = [
     name: 'Coorg',
     state: 'Karnataka',
     tagline: 'Scotland of India',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Coorg%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: coorgImg,
     rating: 4.7,
     budget: 'medium',
     continent: 'South India',
@@ -370,7 +385,7 @@ const destinations = [
     name: 'Shimla',
     state: 'Himachal Pradesh',
     tagline: 'Queen of Hill Stations',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Shimla%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: shimlaImg,
     rating: 4.5,
     budget: 'medium',
     continent: 'North India',
@@ -397,7 +412,7 @@ const destinations = [
     name: 'Jaisalmer',
     state: 'Rajasthan',
     tagline: 'The Golden City',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Jaisalmer%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: jaisalmerImg,
     rating: 4.7,
     budget: 'medium',
     continent: 'North India',
@@ -424,7 +439,7 @@ const destinations = [
     name: 'Amritsar',
     state: 'Punjab',
     tagline: 'The Holy City',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Amritsar%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: amritsarImg,
     rating: 4.8,
     budget: 'low',
     continent: 'North India',
@@ -451,7 +466,7 @@ const destinations = [
     name: 'Meghalaya',
     state: 'Meghalaya',
     tagline: 'Abode of Clouds',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Meghalaya%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: meghalayaImg,
     rating: 4.8,
     budget: 'medium',
     continent: 'East India',
@@ -478,7 +493,7 @@ const destinations = [
     name: 'Andaman Islands',
     state: 'Andaman & Nicobar',
     tagline: 'Tropical Island Paradise',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Andaman%20Islands%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: andamanImg,
     rating: 4.8,
     budget: 'high',
     continent: 'South India',
@@ -505,7 +520,7 @@ const destinations = [
     name: 'Ooty',
     state: 'Tamil Nadu',
     tagline: 'Queen of the Nilgiris',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Ooty%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: ootyImg,
     rating: 4.4,
     budget: 'medium',
     continent: 'South India',
@@ -532,7 +547,7 @@ const destinations = [
     name: 'Pushkar',
     state: 'Rajasthan',
     tagline: 'Rose Garden of Rajasthan',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Pushkar%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: pushkarImg,
     rating: 4.5,
     budget: 'low',
     continent: 'North India',
@@ -559,7 +574,7 @@ const destinations = [
     name: 'Jodhpur',
     state: 'Rajasthan',
     tagline: 'The Blue City',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Jodhpur%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: jodhpurImg,
     rating: 4.7,
     budget: 'medium',
     continent: 'North India',
@@ -586,7 +601,7 @@ const destinations = [
     name: 'Alleppey',
     state: 'Kerala',
     tagline: 'Venice of the East',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Alleppey%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: alleppeyImg,
     rating: 4.7,
     budget: 'medium',
     continent: 'South India',
@@ -613,7 +628,7 @@ const destinations = [
     name: 'Pondicherry',
     state: 'Puducherry (UT)',
     tagline: 'French Riviera of India',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Pondicherry%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: pondicherryImg,
     rating: 4.6,
     budget: 'medium',
     continent: 'South India',
@@ -640,7 +655,7 @@ const destinations = [
     name: 'Mount Abu',
     state: 'Rajasthan',
     tagline: 'Oasis in the Desert',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Mount%20Abu%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: mountabuImg,
     rating: 4.3,
     budget: 'low',
     continent: 'West India',
@@ -667,7 +682,7 @@ const destinations = [
     name: 'Mussoorie',
     state: 'Uttarakhand',
     tagline: 'Gateway to the Garhwal Himalayas',
-    image: 'https://image.pollinations.ai/prompt/Most%20famous%20landmark%20of%20Mussoorie%20India%20highly%20detailed%20beautiful%20travel%20photography?width=800&height=600&nologo=true&seed=42',
+    image: mussoorieImg,
     rating: 4.4,
     budget: 'medium',
     continent: 'North India',

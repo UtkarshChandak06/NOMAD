@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import Icon from '../components/Icon'
 import { useTrips } from '../lib/TripContext'
+import destinations from '../data/destinations'
 
 export default function Itinerary() {
   const { id } = useParams()
@@ -46,7 +47,7 @@ export default function Itinerary() {
         <section className="relative h-[50vh] w-full flex items-end p-8 md:p-12 overflow-hidden">
           <img
             className="absolute inset-0 w-full h-full object-cover"
-            src={trip.image || 'https://image.pollinations.ai/prompt/beautiful%20travel%20destination%20landscape%20photography?width=1200&height=600&nologo=true'}
+            src={trip.image || destinations[0]?.image}
             alt={trip.title}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#fdf9f3] via-[#00257b]/40 to-transparent" />

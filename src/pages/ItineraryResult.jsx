@@ -5,6 +5,15 @@ import { useTrips } from '../lib/TripContext'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { chatWithNomad } from '../lib/ai'
 import defaultItineraries from '../data/defaultItineraries'
+import destinations from '../data/destinations'
+
+/* Helper: find a matching local image for a destination name */
+function getDestinationImage(destName) {
+  if (!destName) return null;
+  const name = destName.split(',')[0].trim().toLowerCase();
+  const match = destinations.find(d => d.name.toLowerCase() === name || d.id === name);
+  return match?.image || destinations[0]?.image || null;
+}
 
 /* ─── AI Prompt for structured itinerary ─── */
 function buildItineraryPrompt(answers) {
@@ -204,7 +213,7 @@ No markdown, no explanation.`
       region: answers.destination,
       duration: answers.duration,
       style: answers.style,
-      image: `https://image.pollinations.ai/prompt/${encodeURIComponent("Most famous landmark of " + answers.destination.split(',')[0] + " highly detailed beautiful travel scenery photography")}?width=800&height=600&nologo=true`,
+      image: getDestinationImage(answers.destination),
       answers: answers,
       itinerary: itinerary,
       days: itinerary.days.map(d => ({
@@ -213,7 +222,7 @@ No markdown, no explanation.`
         route: `${d.morning?.activity || ''}, ${d.afternoon?.activity || ''}, ${d.evening?.activity || ''}`,
         food: d.lunch?.mustTry || '',
         cost: d.estimatedDayCost,
-        img: `https://image.pollinations.ai/prompt/${encodeURIComponent("Most famous landmark of " + (d.morning?.activity || answers.destination.split(',')[0]) + " highly detailed beautiful travel photography")}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random() * 1000)}`
+        img: getDestinationImage(answers.destination)
       }))
     }
 
@@ -410,8 +419,7 @@ Return ONLY JSON in this format: { "categories": [ { "name": "Clothing", "items"
           <div className="xl:col-span-7 space-y-12">
             {itinerary.days.map((day, idx) => {
               const dayStr = day.dayNumber || idx + 1;
-              const imgQuery = day.imageKeyword || day.morning?.activity || answers.destination.split(',')[0];
-              const imgSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent("Most famous and beautiful tourist landmark of " + imgQuery + " highly detailed photography")}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random() * 1000)}`;
+              const imgSrc = getDestinationImage(answers.destination);
               
               return (
                 <div key={idx} className="group relative flex gap-4 md:gap-8">

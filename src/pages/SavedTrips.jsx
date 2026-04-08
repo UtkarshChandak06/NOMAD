@@ -2,6 +2,7 @@ import { useTrips } from '../lib/TripContext'
 import Sidebar from '../components/Sidebar'
 import Icon from '../components/Icon'
 import { Link } from 'react-router-dom'
+import destinations from '../data/destinations'
 
 export default function SavedTrips() {
   const { trips, removeTrip } = useTrips()
@@ -39,7 +40,7 @@ export default function SavedTrips() {
                             <Link to={`/itinerary/${trip.id}`} className="flex-1 flex flex-col">
                                 <div className="aspect-[16/10] overflow-hidden relative">
                                     <img 
-                                        src={trip.image || 'https://image.pollinations.ai/prompt/beautiful%20travel%20destination%20landscape%20photography?width=800&height=600&nologo=true'} 
+                                        src={trip.image || destinations[0]?.image} 
                                         alt={trip.title} 
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
                                     />
