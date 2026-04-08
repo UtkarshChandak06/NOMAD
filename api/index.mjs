@@ -8,10 +8,22 @@ import { fileURLToPath } from 'url'
 dotenv.config()
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+/* ─── API Endpoints ─── */
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
-const DEFAULT_MODEL = process.env.GROQ_MODEL || 'llama-3.1-8b-instant'
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
+const DEFAULT_GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.1-8b-instant'
+const DEFAULT_GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
+
 const MAX_MESSAGE_CHARS = 12000
 const MAX_MESSAGES = 40
+
+/* ─── Determine active provider ─── */
+function getProvider() {
+  if (process.env.GEMINI_API_KEY) return 'gemini'
+  if (process.env.GROQ_API_KEY) return 'groq'
+  return null
+}
 
 const app = express()
 app.use(
@@ -24,8 +36,8 @@ app.use(
 app.use(express.json({ limit: '512kb' }))
 
 app.get('/api/health', (_req, res) => {
-  const configured = Boolean(process.env.GROQ_API_KEY)
-  res.json({ ok: true, ai: configured ? 'ready' : 'missing_key' })
+  const provider = getProvider()
+  res.json({ ok: true, ai: provider ? 'ready' : 'missing_key', provider: provider || 'none' })
 })
 
 function validateMessages(messages) {
@@ -44,11 +56,101 @@ function validateMessages(messages) {
   return null
 }
 
-app.post('/api/chat', async (req, res) => {
+/* ─── Gemini API call ─── */
+async function callGemini({ messages, system, temperature, maxTokens }) {
+  const key = process.env.GEMINI_API_KEY
+  const model = DEFAULT_GEMINI_MODEL
+  const url = `${GEMINI_URL}/${model}:generateContent?key=${key}`
+
+  // Convert OpenAI-style messages to Gemini format
+  const contents = []
+  for (const m of messages) {
+    if (m.role === 'system') continue // system handled separately
+    contents.push({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    })
+  }
+
+  const body = {
+    contents,
+    generationConfig: {
+      temperature: Math.min(2, Math.max(0, Number(temperature) || 0.65)),
+      maxOutputTokens: Math.min(8192, Math.max(256, Number(maxTokens) || 4096)),
+    },
+  }
+
+  // Add system instruction if provided
+  if (system?.trim()) {
+    body.systemInstruction = { parts: [{ text: system.trim() }] }
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  const data = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const msg = data?.error?.message || 'Gemini API error'
+    const status = response.status >= 400 && response.status < 600 ? response.status : 502
+    throw { status, message: msg }
+  }
+
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+  return {
+    message: text,
+    model: model,
+    usage: data?.usageMetadata ?? null,
+  }
+}
+
+/* ─── Groq API call ─── */
+async function callGroq({ messages, system, temperature, maxTokens }) {
   const key = process.env.GROQ_API_KEY
-  if (!key) {
+
+  const payloadMessages = system?.trim()
+    ? [{ role: 'system', content: system.trim() }, ...messages]
+    : messages
+
+  const response = await fetch(GROQ_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model: DEFAULT_GROQ_MODEL,
+      messages: payloadMessages,
+      temperature: Math.min(2, Math.max(0, Number(temperature) || 0.65)),
+      max_tokens: Math.min(5000, Math.max(256, Number(maxTokens) || 4096)),
+    }),
+  })
+
+  const data = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const msg = data?.error?.message || data?.message || 'Groq API error'
+    const status = response.status >= 400 && response.status < 600 ? response.status : 502
+    throw { status, message: msg }
+  }
+
+  const text = data?.choices?.[0]?.message?.content ?? ''
+  return {
+    message: text,
+    model: data?.model || DEFAULT_GROQ_MODEL,
+    usage: data?.usage ?? null,
+  }
+}
+
+/* ─── Main Chat Endpoint ─── */
+app.post('/api/chat', async (req, res) => {
+  const provider = getProvider()
+  if (!provider) {
     return res.status(503).json({
-      error: 'AI is not configured. Set GROQ_API_KEY in a .env file on the server (never in the browser).',
+      error: 'AI is not configured. Set GEMINI_API_KEY or GROQ_API_KEY in a .env file on the server.',
     })
   }
 
@@ -66,42 +168,31 @@ app.post('/api/chat', async (req, res) => {
     return res.status(400).json({ error: 'system prompt too long' })
   }
 
-  const payloadMessages = system?.trim()
-    ? [{ role: 'system', content: system.trim() }, ...messages]
-    : messages
-
   try {
-    const groqRes = await fetch(GROQ_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model: DEFAULT_MODEL,
-        messages: payloadMessages,
-        temperature: Math.min(2, Math.max(0, Number(temperature) || 0.65)),
-        max_tokens: Math.min(5000, Math.max(256, Number(max_tokens) || 4096)),
-      }),
-    })
+    const callArgs = { messages, system, temperature, maxTokens: max_tokens }
+    let result
 
-    const data = await groqRes.json().catch(() => ({}))
-
-    if (!groqRes.ok) {
-      const msg = data?.error?.message || data?.message || 'Groq API error'
-      return res.status(groqRes.status >= 400 && groqRes.status < 600 ? groqRes.status : 502).json({
-        error: msg,
-      })
+    if (provider === 'gemini') {
+      try {
+        result = await callGemini(callArgs)
+      } catch (geminiErr) {
+        // Auto-fallback to Groq if Gemini fails and Groq key exists
+        if (process.env.GROQ_API_KEY) {
+          console.log(`[nomad] Gemini failed (${geminiErr.message}), falling back to Groq...`)
+          result = await callGroq(callArgs)
+        } else {
+          throw geminiErr
+        }
+      }
+    } else {
+      result = await callGroq(callArgs)
     }
 
-    const text = data?.choices?.[0]?.message?.content ?? ''
-    res.json({
-      message: text,
-      model: data?.model || DEFAULT_MODEL,
-      usage: data?.usage ?? null,
-    })
+    res.json(result)
   } catch (e) {
-    res.status(500).json({ error: e instanceof Error ? e.message : 'Server error' })
+    const status = e?.status || 500
+    const message = e?.message || (e instanceof Error ? e.message : 'Server error')
+    res.status(status).json({ error: message })
   }
 })
 
@@ -121,6 +212,7 @@ export default app;
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   const PORT = Number(process.env.PORT) || 8787
   app.listen(PORT, () => {
-    console.log(`[nomad] API ${fs.existsSync(distPath) ? '+ static ' : ''}→ http://localhost:${PORT}`)
+    const p = getProvider()
+    console.log(`[nomad] API (${p || 'no AI key'}) ${fs.existsSync(distPath) ? '+ static ' : ''}→ http://localhost:${PORT}`)
   })
 }
