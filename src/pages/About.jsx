@@ -156,7 +156,7 @@ const projects = [
       'Personalized 17-question behavioral planner'
     ],
     contributions: [
-      'Built full-stack application end-to-end',
+      'Built web application end-to-end',
       'Designed NLP-based natural language input parser',
       'Developed backend API proxy for AI inference',
       'Implemented full UI/UX design system',
@@ -393,7 +393,7 @@ export default function About() {
             <div className="text-center mb-16">
               <p className="text-[10px] font-black text-[#FF9933] uppercase tracking-[0.4em] mb-3">Featured Work</p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-['Noto_Serif'] font-black text-[#0033A0] mb-4">Projects</h2>
-              <p className="text-[#00257b]/50 font-medium max-w-xl mx-auto">Real-world systems built from the ground up — spanning AI, IoT, and full-stack web development.</p>
+              <p className="text-[#00257b]/50 font-medium max-w-xl mx-auto">Real-world systems built from the ground up — spanning AI, IoT, and web development.</p>
             </div>
 
             <div className="space-y-8">
